@@ -2,7 +2,10 @@
 #include "target.h"
 
 XiaoC6Board board;
-
+#ifdef DISPLAY_CLASS
+  DISPLAY_CLASS display;
+  MomentaryButton user_btn(PIN_USER_BTN, 1000, true); 
+#endif
 #if defined(P_LORA_SCLK)
   static SPIClass spi(0);
   RADIO_CLASS radio = new Module(P_LORA_NSS, P_LORA_DIO_1, P_LORA_RESET, P_LORA_BUSY, spi);
