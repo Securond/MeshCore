@@ -57,13 +57,27 @@ public:
     int logoWidth = 128;
     display.drawXbm((display.width() - logoWidth) / 2, 3, meshcore_logo, logoWidth, 13);
 
+    // meshcore website
+    const char* website = "https://meshcore.io";
+    display.setColor(DisplayDriver::LIGHT);
+    display.setTextSize(1);
+    uint16_t websiteWidth = display.getTextWidth(website);
+    display.setCursor((display.width() - websiteWidth) / 2, 22);
+    display.print(website);
+
     // version info
     display.setColor(DisplayDriver::LIGHT);
-    display.setTextSize(2);
-    display.drawTextCentered(display.width()/2, 22, _version_info);
+    display.setTextSize(1);
+    display.drawTextCentered(display.width()/2, 35, _version_info);
 
     display.setTextSize(1);
-    display.drawTextCentered(display.width()/2, 42, FIRMWARE_BUILD_DATE);
+#ifdef CYRILLIC
+    char filtered_date[sizeof(FIRMWARE_BUILD_DATE)];
+    display.translateUTF8ToBlocks(filtered_date, FIRMWARE_BUILD_DATE, sizeof(filtered_date));
+    display.drawTextCentered(display.width()/2, 48, filtered_date);
+#else
+    display.drawTextCentered(display.width()/2, 48, FIRMWARE_BUILD_DATE);
+#endif
 
     return 1000;
   }
@@ -462,7 +476,11 @@ class MsgPreviewScreen : public UIScreen {
   struct MsgEntry {
     uint32_t timestamp;
     char origin[62];
+#ifdef CYRILLIC
+    char msg[140];
+#else
     char msg[78];
+#endif
   };
   #define MAX_UNREAD_MSGS   32
   int num_unread;
@@ -519,7 +537,13 @@ public:
     display.setColor(DisplayDriver::LIGHT);
     char filtered_msg[sizeof(p->msg)];
     display.translateUTF8ToBlocks(filtered_msg, p->msg, sizeof(filtered_msg));
+#ifdef CYRILLIC
+    char truncated_msg[78];
+    StrHelper::strncpy(truncated_msg, filtered_msg, sizeof(truncated_msg));
+    display.printWordWrap(truncated_msg, display.width());
+#else
     display.printWordWrap(filtered_msg, display.width());
+#endif
 
 #if AUTO_OFF_MILLIS==0 // probably e-ink
     return 10000; // 10 s

@@ -17,3 +17,8 @@ compile_commands.json
 .venv/
 venv/
 platformio.local.ini
+boards/esp32-s3-devkitc-1-n16r8v.json
+variants/generic-e22_esp32n16r8/platformio.ini
+variants/generic-e22_esp32n16r8/target.cpp
+variants/generic-e22_esp32n16r8/target.h
+variants/generic-e22_esp32n16r8/variant.h
